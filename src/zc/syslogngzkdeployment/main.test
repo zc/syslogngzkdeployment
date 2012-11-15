@@ -32,10 +32,10 @@ been set up to read configuration files from that directory.
     >>> _ = Recipe(Buildout(), 'cust,app,logs.0', {})
     ... # doctest: +NORMALIZE_WHITESPACE
     [deployment]
-    name = cust,app,logs
+    name = cust_app_logs
     recipe = zc.recipe.deployment
     user = zope
-    [cust,app,logs.conf]
+    [cust_app_logs.conf]
     deployment = deployment
     directory = /etc/syslog-ng/syslog-ng.d
     recipe = zc.recipe.deployment:configuration
@@ -47,7 +47,7 @@ been set up to read configuration files from that directory.
           };
     <BLANKLINE>
       destination d_cust_app_logs {
-          file("/var/log/cust,app,logs/$R_YEAR-$R_MONTH-$R_DAY.log"
+          file("/var/log/cust_app_logs/$R_YEAR-$R_MONTH-$R_DAY.log"
                perm(0644)
                dir_perm(0755)
                create_dirs(yes)
@@ -74,13 +74,13 @@ You can specify the log path yourself.
 .. -> tree
 
     >>> zk.import_tree(tree)
-    >>> _ = Recipe(Buildout(), 'cust,app,logs.0', {})
+    >>> recipe = Recipe(Buildout(), 'cust_app_logs.0'_ {})
     ... # doctest: +NORMALIZE_WHITESPACE
     [deployment]
-    name = cust,app,logs
+    name = cust_app_logs
     recipe = zc.recipe.deployment
     user = zope
-    [cust,app,logs.conf]
+    [cust_app_logs.conf]
     deployment = deployment
     directory = /etc/syslog-ng/syslog-ng.d
     recipe = zc.recipe.deployment:configuration
@@ -102,3 +102,9 @@ You can specify the log path yourself.
           };
     <BLANKLINE>
       log { source(s_cust_app_logs); destination(d_cust_app_logs); };
+
+The recipe install and update methods reload syslog.ng:
+
+    >>> recipe.install()
+
+    >>> recipe.update()

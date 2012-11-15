@@ -1,3 +1,4 @@
+import subprocess
 import zc.metarecipe
 import zc.zk
 
@@ -9,6 +10,7 @@ class Aggregate(zc.metarecipe.Recipe):
 
         name = name[:-2]
         path = '/'+name.replace(',', '/')
+        name = name.replace(',', '_')
 
         zk = zc.zk.ZK('zookeeper:2181')
         options = zk.properties(path)
@@ -25,11 +27,16 @@ class Aggregate(zc.metarecipe.Recipe):
             directory = '/etc/syslog-ng/syslog-ng.d',
             text = aggregate_template % dict(
                 port = options['port'],
-                name = name.replace(',', '_'),
+                name = name,
                 lpath = options.get(
                     'path', '/var/log/%s/$R_YEAR-$R_MONTH-$R_DAY.log' % name)
                 ),
             )
+
+    def install(self):
+        subprocess.call('/etc/init.d/syslog-ng reload')
+
+    update = install
 
 aggregate_template = r'''
 source s_%(name)s {
