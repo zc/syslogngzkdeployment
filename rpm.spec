@@ -1,5 +1,5 @@
 Name: syslogngzkdeployment
-Version: 0.1.0.1.0
+Version: 0.1.0
 Release: 1
 
 Summary: Buildout recipe for configuring zc.resumelb via zc.zkdeployment
