@@ -34,7 +34,7 @@ class Aggregate(zc.metarecipe.Recipe):
             )
 
     def install(self):
-        subprocess.call('/etc/init.d/syslog-ng reload')
+        subprocess.call(['/etc/init.d/syslog-ng', 'reload'])
 
     update = install
 
