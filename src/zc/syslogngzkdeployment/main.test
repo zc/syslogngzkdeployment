@@ -74,7 +74,7 @@ You can specify the log path yourself.
 .. -> tree
 
     >>> zk.import_tree(tree)
-    >>> recipe = Recipe(Buildout(), 'cust_app_logs.0'_ {})
+    >>> recipe = Recipe(Buildout(), 'cust,app,logs.0', {})
     ... # doctest: +NORMALIZE_WHITESPACE
     [deployment]
     name = cust_app_logs
@@ -106,5 +106,7 @@ You can specify the log path yourself.
 The recipe install and update methods reload syslog.ng:
 
     >>> recipe.install()
+    subprocess.call ('/etc/init.d/syslog-ng reload',)
 
     >>> recipe.update()
+    subprocess.call ('/etc/init.d/syslog-ng reload',)

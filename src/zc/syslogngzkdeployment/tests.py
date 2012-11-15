@@ -20,7 +20,7 @@ import unittest
 import zc.zk.testing
 
 def faux_call(*args):
-    print 'subprocess.call', *args
+    print 'subprocess.call', args
 
 def setUp(test):
     zc.zk.testing.setUp(test, '', 'zookeeper:2181')
