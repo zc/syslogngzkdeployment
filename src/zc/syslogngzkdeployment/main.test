@@ -1,0 +1,94 @@
+=========================================
+syslog-ng configuration with zkdeployment
+=========================================
+
+servers
+=======
+
+A server provides a sink that clients can send log data to that logs
+to a file on the server.  The recipe reads some options from a
+ZooKeeper node and adds a configuration file to
+/etc/syslog-ng/syslog-ng.d.  The recipe assumes that syslog-ng has
+been set up to read configuration files from that directory.
+
+::
+
+  /cust
+    /app
+      /logs : syslogng aggregate
+        port = 514
+
+.. -> tree
+
+    >>> import zc.zk
+    >>> zk = zc.zk.ZK('zookeeper:2181')
+    >>> zk.import_tree(tree)
+    >>> import pkg_resources
+    >>> dist = pkg_resources.working_set.find(
+    ...     pkg_resources.Requirement.parse('zc.syslogngzkdeployment'))
+    >>> Recipe = pkg_resources.load_entry_point(
+    ...     dist, 'zc.buildout', 'aggregate')
+    >>> from zc.metarecipe.testing import Buildout
+    >>> _ = Recipe(Buildout(), 'cust,app,logs.0', {})
+    ... # doctest: +NORMALIZE_WHITESPACE
+    [cust,app,logs.conf]
+    directory = /etc/syslog-ng/syslog-ng.d
+    recipe = zc.recipe.deployment:configuration
+    text = source s_cust_app_logs {
+          tcp(ip(0.0.0.0)
+          max_connections(1000)
+          time_zone("+00:00")
+          port(514));
+          };
+    <BLANKLINE>
+      destination d_cust_app_logs {
+          file("/var/log/cust,app,logs/$R_YEAR-$R_MONTH-$R_DAY.log"
+               perm(0644)
+               dir_perm(0755)
+               create_dirs(yes)
+               template("$HOST $PROGRAM $MSG\n")
+               template_escape(no)
+               );
+          };
+    <BLANKLINE>
+      log { source(s_cust_app_logs); destination(d_cust_app_logs); };
+
+By default, logs are placed in /var/log and embed the date in the
+name.
+
+You can specify the log path yourself.
+
+::
+
+  /cust
+    /app
+      /logs : syslogng aggregate
+        port = 514
+        path = '/logs/app/$R_YEAR-$R_MONTH.log'
+
+.. -> tree
+
+    >>> zk.import_tree(tree)
+    >>> _ = Recipe(Buildout(), 'cust,app,logs.0', {})
+    ... # doctest: +NORMALIZE_WHITESPACE
+    [cust,app,logs.conf]
+    directory = /etc/syslog-ng/syslog-ng.d
+    recipe = zc.recipe.deployment:configuration
+    text = source s_cust_app_logs {
+          tcp(ip(0.0.0.0)
+          max_connections(1000)
+          time_zone("+00:00")
+          port(514));
+          };
+    <BLANKLINE>
+      destination d_cust_app_logs {
+          file("/logs/app/$R_YEAR-$R_MONTH.log"
+               perm(0644)
+               dir_perm(0755)
+               create_dirs(yes)
+               template("$HOST $PROGRAM $MSG\n")
+               template_escape(no)
+               );
+          };
+    <BLANKLINE>
+      log { source(s_cust_app_logs); destination(d_cust_app_logs); };
