@@ -106,7 +106,7 @@ You can specify the log path yourself.
 The recipe install and update methods reload syslog.ng:
 
     >>> recipe.install()
-    subprocess.call ('/etc/init.d/syslog-ng reload',)
+    subprocess.call (['/etc/init.d/syslog-ng', 'reload'],)
 
     >>> recipe.update()
-    subprocess.call ('/etc/init.d/syslog-ng reload',)
+    subprocess.call (['/etc/init.d/syslog-ng', 'reload'],)
