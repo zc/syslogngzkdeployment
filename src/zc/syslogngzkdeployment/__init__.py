@@ -13,8 +13,15 @@ class Aggregate(zc.metarecipe.Recipe):
         zk = zc.zk.ZK('zookeeper:2181')
         options = zk.properties(path)
 
+        self['deployment'] = dict(
+            recipe = 'zc.recipe.deployment',
+            name = name,
+            user = options.get('user', 'zope'),
+            )
+
         self[name+'.conf'] = dict(
             recipe = 'zc.recipe.deployment:configuration',
+            deployment = 'deployment',
             directory = '/etc/syslog-ng/syslog-ng.d',
             text = aggregate_template % dict(
                 port = options['port'],

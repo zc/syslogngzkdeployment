@@ -31,7 +31,12 @@ been set up to read configuration files from that directory.
     >>> from zc.metarecipe.testing import Buildout
     >>> _ = Recipe(Buildout(), 'cust,app,logs.0', {})
     ... # doctest: +NORMALIZE_WHITESPACE
+    [deployment]
+    name = cust,app,logs
+    recipe = zc.recipe.deployment
+    user = zope
     [cust,app,logs.conf]
+    deployment = deployment
     directory = /etc/syslog-ng/syslog-ng.d
     recipe = zc.recipe.deployment:configuration
     text = source s_cust_app_logs {
@@ -71,7 +76,12 @@ You can specify the log path yourself.
     >>> zk.import_tree(tree)
     >>> _ = Recipe(Buildout(), 'cust,app,logs.0', {})
     ... # doctest: +NORMALIZE_WHITESPACE
+    [deployment]
+    name = cust,app,logs
+    recipe = zc.recipe.deployment
+    user = zope
     [cust,app,logs.conf]
+    deployment = deployment
     directory = /etc/syslog-ng/syslog-ng.d
     recipe = zc.recipe.deployment:configuration
     text = source s_cust_app_logs {
